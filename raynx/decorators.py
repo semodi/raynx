@@ -30,7 +30,7 @@ def _validate_signature_node(func: Callable):
 
     return InType, OutType, ConType
 
-def _validate_signature_decorator(func: Callable):
+def _validate_signature_converter(func: Callable):
     """Ensures that only input_model and context are in function's signature and
     infers and returns types from annotations."""
 
@@ -41,7 +41,7 @@ def _validate_signature_decorator(func: Callable):
     signature = inspect.signature(func).parameters
 
     if "output_model" not in signature:
-        raise AttributeError(f"input_model must be argument of {func.__name__}")
+        raise AttributeError(f"output_model must be argument of {func.__name__}")
 
     if len(signature) > 2:
         extra = tuple(key for key in signature if key not in ["context", "input_model"])
@@ -103,7 +103,7 @@ def _converter_decorator(
     output_type: type = None,
 ):
 
-    OutType, InType = _validate_signature_decorator(func)
+    OutType, InType = _validate_signature_converter(func)
     input_type = input_type or InType
     output_type = output_type or OutType
 
