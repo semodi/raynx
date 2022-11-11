@@ -1,8 +1,9 @@
-import yaml
+from typing import Iterable, Union
+
 import networkx as nx
+import yaml
 from pydantic import BaseModel, validator
 
-from typing import Iterable, Union
 from raynx.models import InputModel
 from raynx.node import ConnectedNode, Node
 from raynx.ray_utils import ContextModel, RayGlob, RayRemoteOptions
@@ -32,25 +33,23 @@ class GraphModel(BaseModel):
         return _graph_from_config(val)
 
     def run(self, input_model: InputModel = None, context: ContextModel = None):
-        res = [
-            root.compute_as_root(input_model, context)
-            for root in self.workflow.values()
-        ]
+        res = [root.compute_as_root(input_model, context) for root in self.workflow.values()]
         for r in res:
             [r_.get() for r_ in r]
 
     @property
     def nodes(self) -> Iterable[ConnectedNode]:
         _nodes = dict()
+
         def _add(node: Union[ConnectedNode, Node]):
-            _nodes[id(node)] = node 
+            _nodes[id(node)] = node
             if isinstance(node, ConnectedNode):
                 for cnode in node.to:
                     _add(cnode)
-        
+
         for node in self.root_nodes:
             _add(node)
-        
+
         for node in _nodes.values():
             yield node
 
@@ -64,7 +63,6 @@ class GraphModel(BaseModel):
     def root_nodes(self):
         for node in self.workflow.values():
             yield node
-        
 
 
 def _graph_from_config(config_dict):

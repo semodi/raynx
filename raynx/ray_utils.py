@@ -190,7 +190,9 @@ class RaySwitchRemote:
 
     @property
     def ray(self):
-        return (self.context.ray.use_ray if self.context and self.context.ray else False) or RayGlob.use_ray
+        return (
+            self.context.ray.use_ray if self.context and self.context.ray else False
+        ) or RayGlob.use_ray
 
     def _copy_with_options(self, **options):
         rs = RaySwitchRemote(self._func, context=self.context)

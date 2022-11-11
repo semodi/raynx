@@ -10,7 +10,7 @@ from raynx.utils import batch, iter_modes
 model_converters = defaultdict(dict)
 
 
-def _dummy_converter(model):
+def _default_converter(model):
     def convert(data):
         return model(**data.dict())
 
@@ -21,7 +21,7 @@ class DataModel(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         allow_mutation = False
-        extra = "forbid"
+        extra = "ignore"
 
 
 class InputModel(DataModel):
@@ -97,7 +97,7 @@ class OutputModel(DataModel):
             )
 
         converter = model_converters.get(type(self), {}).get(
-            input_type, _dummy_converter(input_type)
+            input_type, _default_converter(input_type)
         )
         return converter(self)
 
@@ -112,8 +112,11 @@ class OutputModel(DataModel):
             return True
         else:
             # TODO: This is a rather weak assumption
-            if cls.__fields__.keys() == input_type.__fields__.keys():
-                warn(f"Will use dummy converter to convert from {cls} to {input_type}")
+            required_fields = {
+                key for key, field in input_type.__fields__.items() if field.required
+            }
+            if set(cls.__fields__.keys()) == required_fields:
+                warn(f"Will use default converter to convert from {cls} to {input_type}")
                 return True
             else:
                 return False

@@ -1,0 +1,115 @@
+# Build system dependencies ----------
+
+[build-system]
+requires = ["poetry-core>=1.0.8"]
+build-backend = "poetry.core.masonry.api"
+
+# Project package metadata ----------
+
+[tool.poetry]
+name = "raynx"
+packages = [
+  { include = "raynx" }
+]
+exclude = [
+  "*/tests/"
+]
+version = "0.0.0.1a"
+description = "Type validated ray DAG workflows"
+authors = ["Sebastian Dick"]
+classifiers = [
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+]
+readme = "README.rst"
+homepage = ""
+repository = "https://github.com/semodi/raynx"
+documentation = ""
+
+[tool.poetry.scripts]
+raynx = 'raynx.cli:main'
+
+# Dependencies ----------
+
+# The conda channels and platforms from which to resolve dependencies
+[tool.conda-lock]
+channels = [
+  "conda-forge",
+]
+platforms = [
+  "linux-64",
+  #"osx-64"
+]
+
+# Runtime dependencies that are only conda installable
+[tool.conda-lock.dependencies]
+ray-default = "*"
+
+# Runtime dependencies that are both pip and conda installable
+[tool.poetry.dependencies]
+# Ray conda package doesn't support python 3.10 versions
+python = ">=3.7.0,<3.10.0"
+importlib_metadata = {version = ">=4", python = "~3.7"}
+pydantic = "*"
+
+# Development dependencies that are at least pip installable.
+# If dependencies are only pip installable, set
+# them as {version = "<version number>", source = "pypi"}
+[tool.poetry.dev-dependencies]
+black = "22.3.0"
+cloudsmith-cli = {version = "0.32.0", source = "pypi"}
+detail = {version = "0.2.0", source = "pypi"}
+flake8 = "3.9.2"
+flake8-bugbear = "22.1.11"
+flake8-comprehensions = "3.8.0"
+flake8-logging-format = "0.6.0"
+flake8-mutable = "1.2.0"
+footing = {version = "*", source = "pypi"}
+google-cloud-storage = "2.1.0"
+grayskull = "1.1.2"
+isort = "5.10.1"
+myst-parser = "0.17.0"
+packaging = ">=19.2"
+pip = "*"
+poetry = "1.1.13"
+pytest = "6.2.5"
+pytest-cov = "3.0.0"
+Sphinx = "4.4.0"
+sphinx_rtd_theme = "1.0.0"
+
+# Dev tool configuration ---
+
+# Black formatting parameters
+[tool.black]
+line-length = 99
+
+# Coverage settings
+[tool.coverage.run]
+branch = true
+source = ["parmedizer"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "pass",
+  "pytest.mark.skip"
+]
+show_missing = true
+fail_under = 70
+
+# Isort settings
+[tool.isort]
+profile = "black"
+
+# Pytest options
+[tool.pytest.ini_options]
+xfail_strict = true
+testpaths = "parmedizer/tests"
+norecursedirs = "parmedizer/tests/mol_testsuites"
+# Add --cov-config=pyproject.toml for this issue:
+# https://github.com/nedbat/coveragepy/issues/512
+addopts = "--cov --color=yes --cov-config=pyproject.toml --cov-report=xml --cov-report=html --cov-report=term-missing"

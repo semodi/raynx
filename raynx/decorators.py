@@ -30,6 +30,7 @@ def _validate_signature_node(func: Callable):
 
     return InType, OutType, ConType
 
+
 def _validate_signature_converter(func: Callable):
     """Ensures that only input_model and context are in function's signature and
     infers and returns types from annotations."""
@@ -49,6 +50,7 @@ def _validate_signature_converter(func: Callable):
 
     return InType, OutType
 
+
 def _node_decorator(
     func: Callable,
     input_type: type = None,
@@ -67,9 +69,7 @@ def _node_decorator(
     context_type = context_type or ConType
 
     def err(which_type):
-        raise AttributeError(
-            f"{which_type} type could not be determined for {func.__name__}"
-        )
+        raise AttributeError(f"{which_type} type could not be determined for {func.__name__}")
 
     if not input_type:
         err("input")
@@ -108,9 +108,7 @@ def _converter_decorator(
     output_type = output_type or OutType
 
     def err(which_type):
-        raise AttributeError(
-            f"{which_type} type could not be determined for {func.__name__}"
-        )
+        raise AttributeError(f"{which_type} type could not be determined for {func.__name__}")
 
     if not input_type:
         err("input")

@@ -36,9 +36,7 @@ class SimpleContext(ContextModel):
 
 
 simple_in = SimpleInput(list_float=[1.1, 1.2, -0.2], single_float=2.3, logical=False)
-incremented_out = SimpleOutput(
-    list_float=[1.2, 1.3, -0.1], single_float=2.4, logical=True
-)
+incremented_out = SimpleOutput(list_float=[1.2, 1.3, -0.1], single_float=2.4, logical=True)
 incremented_out_chained = SimpleOutput(
     list_float=[1.21, 1.31, -0.09], single_float=2.41, logical=False
 )
@@ -48,22 +46,16 @@ def increment(input_model, incr=0.1):
     list_float = [round(f + incr, 3) for f in input_model.list_float]
     logical = not input_model.logical
     single_float = round(input_model.single_float + incr, 3)
-    return SimpleOutput(
-        list_float=list_float, single_float=single_float, logical=logical
-    )
+    return SimpleOutput(list_float=list_float, single_float=single_float, logical=logical)
 
 
 @node
-def increment_all(
-    input_model: SimpleInput, context: SimpleContext = None
-) -> SimpleOutput:
+def increment_all(input_model: SimpleInput, context: SimpleContext = None) -> SimpleOutput:
     return increment(input_model, incr=0.1)
 
 
 @node
-def increment_small(
-    input_model: SimpleInput, context: SimpleContext = None
-) -> SimpleOutput:
+def increment_small(input_model: SimpleInput, context: SimpleContext = None) -> SimpleOutput:
     return increment(input_model, incr=0.01)
 
 
@@ -137,9 +129,7 @@ def test_node_for_each():
             for_each=["list_float", "logical"],
             for_each_mode="inner",
         )
-        def increment_all_anno(
-            input_model, context: SimpleContext = None
-        ) -> SimpleOutput:
+        def increment_all_anno(input_model, context: SimpleContext = None) -> SimpleOutput:
             ...
 
 
@@ -157,9 +147,7 @@ def test_connect():
     assert results[-1].dict() == incremented_out_chained.dict()
 
     @node(input_type=SimpleInput, for_each=["list_float"], for_each_mode="inner")
-    def incompatible(
-        input_model, context: SimpleContext = None
-    ) -> SimpleOutputIncompatible:
+    def incompatible(input_model, context: SimpleContext = None) -> SimpleOutputIncompatible:
         ...
 
     with pytest.raises(pydantic.ValidationError):
@@ -174,10 +162,7 @@ def test_connect():
     cnode = ConnectedNode(node=increment_small, to=[])
     cnode.add_hook(result_hook)
     connected_increment = increment_all.forward_connect_to(
-        compatible_for_each.forward_connect_to(cnode
-        )
+        compatible_for_each.forward_connect_to(cnode)
     )
     connected_increment.compute(simple_in, context=SimpleContext())
-    assert len(results) == math.ceil(
-        len(simple_in.list_float) / SimpleContext().batch_size
-    )
+    assert len(results) == math.ceil(len(simple_in.list_float) / SimpleContext().batch_size)

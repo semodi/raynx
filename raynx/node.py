@@ -22,9 +22,7 @@ class Node(ABC):
         ``_context_type``
         """
         if self.name in self._instances:
-            warn(
-                f"An instance with a class name {self.name} already exists. Overwriting..."
-            )
+            warn(f"An instance with a class name {self.name} already exists. Overwriting...")
         self._instances[self.name] = self
 
     @classmethod
@@ -77,9 +75,7 @@ class Node(ABC):
         raise NotImplementedError()
 
     def __call__(self):
-        raise RuntimeError(
-            "Nodes should not be called directly, use node.compute() instead"
-        )
+        raise RuntimeError("Nodes should not be called directly, use node.compute() instead")
 
     def compute(
         self, input_model: InputModel, context: Optional[ContextModel] = None
@@ -112,9 +108,7 @@ class Node(ABC):
 
         return res
 
-    def forward_connect_to(
-        self, connected_nodes: list["Node"], **kwargs
-    ) -> "ConnectedNode":
+    def forward_connect_to(self, connected_nodes: list["Node"], **kwargs) -> "ConnectedNode":
         """Connect this node to ``connected_nodes``. The output model of this
         Node will be sent to connected_nodes as input (after appropriate conversion).
 
@@ -215,12 +209,13 @@ class ConnectedNode(ConnectedNodeBase):
                     if isinstance(v, dict):
                         val[key] = node_fields[key].type_(**v)
                     else:
+                        print(v)
                         raise
         return val
 
     def add_hook(self, hook: Callable):
         self.output_hooks.append(hook)
-    
+
     def clear_hooks(self):
         self.output_hooks.clear()
 
@@ -246,7 +241,11 @@ class ConnectedNode(ConnectedNodeBase):
             mode=self.node.for_each_mode,
             batch_size=runtime_context.batch_size,
         ):
-            results.append(RaySwitchRemote(self.compute, context=runtime_context).options(name=self.node.name).remote(im, context))
+            results.append(
+                RaySwitchRemote(self.compute, context=runtime_context)
+                .options(name=self.node.name)
+                .remote(im, context)
+            )
 
         return results
 

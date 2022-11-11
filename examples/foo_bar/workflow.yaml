@@ -1,0 +1,24 @@
+ray: # Ray can be configured globally 
+   use_ray: False
+   num_cpus: 2
+   num_gpus: 0
+workflow:
+  add_one: # These names can be chosen arbitrarily
+     node: foo # This name has to match the name the node is registered by
+     to:
+       - make_message_1  # Send the output to this node
+       - make_message_2  # Send the output to this node
+     context: # Node-specific context can be set here, this will overwrite any context_model provided to the function directly
+        ray: # Ray can also be configured on a per-node level (overwrites global options)
+          use_ray: False
+  make_message_1:
+     node: bar
+     kwargs: # kwargs can be used to set input model attributes to a fixed value:
+        prefix: "make_message_1: "
+  make_message_2:
+     node: bar # Nodes can be used more than once 
+     kwargs:
+        prefix: "make_message_2: "
+     context:
+        batch_size: 2 # For nodes that set for_each, a batch size can be specified.
+                      # By default, the batch size is 1.
