@@ -1,7 +1,7 @@
 from raynx import node
 from raynx.graph import GraphModel
-from raynx.models import InputModel, OutputModel
-from raynx.ray_utils import ContextModel, RayRemoteOptions
+from raynx.models import InputModel, OutputModel, ContextModel
+from raynx.ray_options import RayRemoteOptions
 
 
 class SimpleInput(InputModel):
@@ -128,7 +128,6 @@ workflow:
 simple_graph_foreach_context = """
 ray:
     use_ray: False
-    batch_size: 2
 workflow:
     increment_by_0.1:
         node: increment_LARGE
@@ -197,7 +196,7 @@ def test_simple_graph_kwargs():
     assert results[-1].dict() == expected_out.dict()
 
 
-def test_simple_graph_foreach():
+def test_simple_graph_foreach_context():
     graph = GraphModel.from_yaml(simple_graph_foreach_context)
 
     assert set(node.name for node in graph.root_nodes) == {"increment_LARGE"}

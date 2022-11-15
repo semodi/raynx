@@ -6,6 +6,7 @@ from warnings import warn
 from pydantic import BaseModel
 
 from raynx.utils import batch, iter_modes
+from raynx.ray_options import RayRemoteOptions, RayGlob
 
 model_converters = defaultdict(dict)
 
@@ -115,8 +116,17 @@ class OutputModel(DataModel):
             required_fields = {
                 key for key, field in input_type.__fields__.items() if field.required
             }
-            if set(cls.__fields__.keys()) == required_fields:
+            if not required_fields.difference(set(cls.__fields__.keys())):
                 warn(f"Will use default converter to convert from {cls} to {input_type}")
                 return True
             else:
                 return False
+
+class ContextModel(DataModel):
+
+    ray: RayRemoteOptions = None
+    batch_size: int = 1
+
+    @property
+    def use_ray(self):
+        return self.ray.use_ray or RayGlob.use_ray

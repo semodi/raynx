@@ -4,9 +4,9 @@ import pydantic
 import pytest
 
 from raynx import node
-from raynx.models import InputModel, OutputModel
+from raynx.models import InputModel, OutputModel, ContextModel
 from raynx.node import ConnectedNode
-from raynx.ray_utils import ContextModel, RayRemoteOptions
+from raynx.ray_options import  RayRemoteOptions
 
 
 class SimpleInput(InputModel):

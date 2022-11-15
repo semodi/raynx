@@ -6,8 +6,8 @@ from warnings import warn
 
 from pydantic import BaseModel, validator
 
-from raynx.models import InputModel, OutputModel
-from raynx.ray_utils import ContextModel, RayFuture, RaySwitchRemote
+from raynx.models import InputModel, OutputModel, ContextModel
+from raynx.ray_utils import RayFuture, RaySwitchRemote
 
 
 class Node(ABC):
@@ -123,7 +123,7 @@ class Node(ABC):
             connected_nodes = [connected_nodes]
         return ConnectedNode(node=self, to=connected_nodes, **kwargs)
 
-    def runtime_context(self, context: ContextModel):
+    def _runtime_context(self, context: ContextModel):
         return context
 
 
@@ -289,7 +289,7 @@ class ConnectedNode(ConnectedNodeBase):
         # Convert my output model to input models and send to connected nodes
         for cnode in self.to:
             input_model = output_model.to_input_model(cnode._input_type)
-            cnode_context = cnode.runtime_context(context)
+            cnode_context = cnode._runtime_context(context)
             # Iterate over field that is indicated by cnode.for_each (if None, single iteration)
             for im in input_model.iter_fields(
                 cnode.for_each,

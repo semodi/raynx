@@ -2,9 +2,8 @@ import inspect
 from functools import partial
 from typing import Callable, Literal, Union
 
-from raynx.models import OutputModel, model_converters
+from raynx.models import OutputModel, model_converters, ContextModel
 from raynx.node import Node
-from raynx.ray_utils import ContextModel
 
 
 def _validate_signature_node(func: Callable):

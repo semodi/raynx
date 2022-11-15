@@ -88,7 +88,7 @@ line-length = 99
 # Coverage settings
 [tool.coverage.run]
 branch = true
-source = ["parmedizer"]
+source = ["raynx"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -108,7 +108,7 @@ profile = "black"
 # Pytest options
 [tool.pytest.ini_options]
 xfail_strict = true
-testpaths = "parmedizer/tests"
+testpaths = "raynx/tests"
 norecursedirs = "parmedizer/tests/mol_testsuites"
 # Add --cov-config=pyproject.toml for this issue:
 # https://github.com/nedbat/coveragepy/issues/512

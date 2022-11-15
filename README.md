@@ -122,8 +122,7 @@ This file should contain at least a `workflow` section, outlining the graph:
 
 `workflow.py`
 ```python 
-from raynx.models import InputModel, OutputModel
-from raynx.ray_utils import ContextModel
+from raynx.models import InputModel, OutputModel, ContextModel
 from raynx import node
 
 class FooInput(InputModel):

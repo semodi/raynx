@@ -1,6 +1,5 @@
 from raynx import node
-from raynx.models import InputModel, OutputModel
-from raynx.ray_utils import ContextModel
+from raynx.models import InputModel, OutputModel, ContextModel
 
 
 class FooInput(InputModel):
