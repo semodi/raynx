@@ -156,15 +156,10 @@ def converter(*args, **kwargs):
 
         .. code-block:: python
 
-            @node
-            def foo(input_model: FooInput, context: FooContext) -> FooOutput:
+            @converter
+            def foo_converter(output_model: FooOutput) -> BarInput:
                 ...
-                return output_model
-
-            @node(input_type = FooInput, name='my_bar')
-            def bar(input_model, context: BarContext) -> BarOutput:
-                ...
-                return output_model
+                return input_model 
 
     """
     if len(args) == 1 and callable(args[0]):

@@ -154,6 +154,8 @@ class ConnectedNode(ConnectedNodeBase):
             fields in input_model before ``node.compute`` is called.
         context (Optional[dict]): context dict that should overwrite
             fields in context_model before ``node.compute`` is called.
+        output_hooks (list[Callable]) Hooks (callbacks) that will be 
+            evaluated on the output models.
     """
 
     node: Node
@@ -214,13 +216,22 @@ class ConnectedNode(ConnectedNodeBase):
         return val
 
     def add_hook(self, hook: Callable):
+        """Adds a hook to be called on the output_model
+
+        Args:
+            hook (Callable): 
+        """
         self.output_hooks.append(hook)
 
     def clear_hooks(self):
+        """Remove all hooks"""
         self.output_hooks.clear()
 
-    def runtime_context(self, context: ContextModel = None):
-        # Use self.context to overwrite fields in passed context
+    def _runtime_context(self, context: ContextModel = None):
+        """Determines the context model at runtime with context provided
+        to the ``ConnectedNode`` as an attribute taking precedent over the 
+        context passed to ``compute`` 
+        """
         context_dict = {}
         if context:
             context_dict = deepcopy(context.dict())
@@ -234,7 +245,7 @@ class ConnectedNode(ConnectedNodeBase):
     def compute_as_root(
         self, input_model: InputModel, context: ContextModel = None
     ) -> dict[str, OutputModel]:
-        runtime_context = self.runtime_context(context)
+        runtime_context = self._runtime_context(context)
         results = []
         for im in input_model.iter_fields(
             self.node.for_each,
@@ -271,7 +282,7 @@ class ConnectedNode(ConnectedNodeBase):
             input_model = self.node._input_type(**input_dict)
 
         # Call compute myself and wait for results
-        output_model = self.node.compute(input_model, self.runtime_context(context))
+        output_model = self.node.compute(input_model, self._runtime_context(context))
         node_results = defaultdict(list)
         node_results["result"] = output_model
 
