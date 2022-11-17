@@ -87,7 +87,7 @@ def _node_decorator(
     fields["_input_type"] = property(lambda _: input_type)
     fields["_output_type"] = property(lambda _: output_type)
     fields["for_each"] = property(lambda _: for_each)
-    fields["for_each_model"] = property(lambda _: for_each_mode)
+    fields["for_each_mode"] = property(lambda _: for_each_mode)
     if context_type:
         fields["_context_type"] = property(lambda _: context_type)
     fields["_wrapped_callable"] = staticmethod(func)
